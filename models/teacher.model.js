@@ -12,7 +12,9 @@ const teacherSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: false,
+    required: true, // ⬅️ required: true (previously false)
+    unique: true,   // ✅ Ensure one-time submission per email
+    trim: true,
   },
   phone: {
     type: String,

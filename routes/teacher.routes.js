@@ -39,25 +39,33 @@ router.get('/:id', async (req, res) => {
 });
 
 // ✅ Add a new teacher
+// ✅ Add a new teacher with duplicate email check
 router.post('/', async (req, res) => {
   const { name, designation, email, phone, department, image } = req.body;
 
-  const teacher = new Teacher({
-    name,
-    designation,
-    email,
-    phone,
-    department,
-    image
-  });
-
   try {
+    // 🔒 Check if a teacher with the same email already exists
+    const existingTeacher = await Teacher.findOne({ email });
+    if (existingTeacher) {
+      return res.status(409).json({ message: 'Teacher with this email already exists' });
+    }
+
+    const teacher = new Teacher({
+      name,
+      designation,
+      email,
+      phone,
+      department,
+      image
+    });
+
     const newTeacher = await teacher.save();
     res.status(201).json(newTeacher);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Failed to create teacher', error: err });
   }
 });
+
 
 // ✅ Update a teacher
 router.put('/:id', async (req, res) => {

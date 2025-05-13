@@ -9,6 +9,7 @@ const slotSchema = new mongoose.Schema({
 
 const routineSchema = new mongoose.Schema({
   department: { type: String, required: true },
+  RoutineCreated: { type: String, required: true },
   year: { type: String, required: true }, // e.g., "Honours 3rd Year"
   day: { type: String, required: true },  // e.g., "Sunday"
   room: { type: String, required: true }, // e.g., "1901"
