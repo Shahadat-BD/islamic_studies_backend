@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Teacher = require('../models/teacher.model');
 
-// Get all teachers
+// ✅ Get all teachers
 router.get('/', async (req, res) => {
   try {
     const teachers = await Teacher.find();
@@ -12,8 +12,33 @@ router.get('/', async (req, res) => {
   }
 });
 
+// ✅ Get a teacher by email (Must be above `/:id`)
+router.get('/me/:email', async (req, res) => {
+  try {
+    const teacher = await Teacher.findOne({ email: req.params.email });
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+    res.json(teacher);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch teacher', error: err });
+  }
+});
 
-// Add a new teacher
+// ✅ Get a single teacher by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const teacher = await Teacher.findById(req.params.id);
+    if (!teacher) {
+      return res.status(404).send({ message: 'Teacher not found' });
+    }
+    res.send(teacher);
+  } catch (err) {
+    res.status(500).send({ message: 'Failed to fetch teacher', error: err });
+  }
+});
+
+// ✅ Add a new teacher
 router.post('/', async (req, res) => {
   const { name, designation, email, phone, department, image } = req.body;
 
@@ -34,21 +59,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// DELETE a teacher
-router.delete('/:id', async (req, res) => {
-  try {
-    const result = await Teacher.deleteOne({ _id: req.params.id });
-    if (result.deletedCount === 0) {
-      return res.status(404).send({ message: "Teacher not found" });
-    }
-    res.send({ message: "Teacher deleted successfully" });
-  } catch (err) {
-    res.status(500).send({ message: "Delete failed", error: err });
-  }
-});
-
-
-// UPDATE a teacher
+// ✅ Update a teacher
 router.put('/:id', async (req, res) => {
   try {
     const updatedTeacher = await Teacher.findByIdAndUpdate(
@@ -67,18 +78,17 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// GET a single teacher by ID
-router.get('/:id', async (req, res) => {
+// ✅ Delete a teacher
+router.delete('/:id', async (req, res) => {
   try {
-    const teacher = await Teacher.findById(req.params.id);
-    if (!teacher) {
-      return res.status(404).send({ message: 'Teacher not found' });
+    const result = await Teacher.deleteOne({ _id: req.params.id });
+    if (result.deletedCount === 0) {
+      return res.status(404).send({ message: "Teacher not found" });
     }
-    res.send(teacher);
+    res.send({ message: "Teacher deleted successfully" });
   } catch (err) {
-    res.status(500).send({ message: 'Failed to fetch teacher', error: err });
+    res.status(500).send({ message: "Delete failed", error: err });
   }
 });
-
 
 module.exports = router;
