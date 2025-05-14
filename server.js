@@ -4,6 +4,7 @@ const cors = require('cors');
 const teacherRoutes = require('./routes/teacher.routes');
 const routineRoutes = require('./routes/routineRoutes');
 const userRoutes = require('./routes/userRoutes');
+const academicInfoRoutes= require('./routes/academicInfo.route');
 
 require('dotenv').config()
 const app = express();
@@ -24,6 +25,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/routines', routineRoutes);
 app.use('/users', userRoutes);
+app.use('/academic-info',academicInfoRoutes);
 
 // hello world
 app.get('/', (req, res) => {

@@ -27,22 +27,24 @@ router.get('/', async (req, res) => {
   }
 });
 
-// backend: routes/users.js
+// ✅ Get single user by email
 router.get('/:email', async (req, res) => {
   const user = await User.findOne({ email: req.params.email });
   res.send(user);
 });
 
-
-
-// ✅ Approve student as teacher
-router.put('/approve-teacher/:id', async (req, res) => {
+// ✅ Dynamic role update (student <-> teacher)
+router.put('/:id/role', async (req, res) => {
   try {
-    const id = req.params.id;
-    const result = await User.findByIdAndUpdate(id, { role: 'teacher' }, { new: true });
-    res.send(result);
+    const { role } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { role },
+      { new: true }
+    );
+    res.send(updatedUser);
   } catch (err) {
-    res.status(500).send({ error: 'Failed to update role' });
+    res.status(500).send({ error: 'Failed to update user role' });
   }
 });
 
