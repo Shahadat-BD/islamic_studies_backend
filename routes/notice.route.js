@@ -1,30 +1,67 @@
 const express = require('express');
 const router = express.Router();
 const Notice = require('../models/Notice');
-const upload = require('../middleware/upload');
-const verifyToken = require('../middleware/verifyToken');
-const verifyTeacher = require('../middleware/verifyTeacher');
+const upload = require('../middlewares/upload');
+const path = require('path');
 
-// 🔹 Add Notice (teacher-only)
-router.post('/', verifyToken, verifyTeacher, upload.single('file'), async (req, res) => {
-  const { title, date } = req.body;
-  const fileUrl = req.file ? `http://localhost:5000/${req.file.filename}` : '';
+// 👉 POST Notice
+router.post('/add', upload.single('file'), async (req, res) => {
+  try {
+    const { title, date, postedBy } = req.body;
 
-  const notice = new Notice({
-    title,
-    date,
-    postedBy: req.user.email,
-    file: fileUrl
-  });
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
 
-  await notice.save();
-  res.status(201).json({ message: 'Notice added successfully' });
+    const fileUrl = `/uploads/noticeFiles/${req.file.filename}`;
+
+    const newNotice = new Notice({ title, date, postedBy, fileUrl });
+    await newNotice.save();
+
+    res.status(201).json({ message: 'Notice added successfully', notice: newNotice });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to add notice', error: err.message });
+  }
 });
 
-// 🔹 Public: Get all Notices
-router.get('/all', async (req, res) => {
-  const notices = await Notice.find().sort({ createdAt: -1 });
-  res.json(notices);
+// GET all notices
+router.get('/', async (req, res) => {
+  try {
+    const notices = await Notice.find().sort({ createdAt: -1 });
+    res.status(200).json(notices);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch notices', error });
+  }
 });
+
+// DELETE /notices/:id
+router.delete('/:id', async (req, res) => {
+  try {
+    const result = await Notice.findByIdAndDelete(req.params.id);
+    if (!result) return res.status(404).json({ message: 'Notice not found' });
+    res.json({ message: 'Notice deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// PUT notices/:id
+router.put('/:id', async (req, res) => {
+  try {
+    const { title, date, postedBy } = req.body;
+    const updatedNotice = await Notice.findByIdAndUpdate(
+      req.params.id,
+      { title, date, postedBy },
+      { new: true }
+    );
+    if (!updatedNotice) return res.status(404).json({ message: 'Notice not found' });
+    res.json(updatedNotice);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 module.exports = router;

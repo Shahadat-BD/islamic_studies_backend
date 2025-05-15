@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
 const noticeSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  date: { type: String, required: true },
-  postedBy: { type: String, required: true },
-  file: { type: String }, // file URL (image or PDF)
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
+  title: String,
+  date: String,
+  postedBy: String,
+  fileUrl: String, // Public file path (image/pdf)
 });
+ 
+const Notice = mongoose.model('Notice', noticeSchema);
+module.exports = Notice;
 
-module.exports = mongoose.model('Notice', noticeSchema);
