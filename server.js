@@ -7,7 +7,7 @@ const routineRoutes = require('./routes/routineRoutes');
 const userRoutes = require('./routes/userRoutes');
 const academicInfoRoutes= require('./routes/academicInfo.route');
 const noticeRoutes= require('./routes/notice.route');
-const resultRoutes= require('./routes/resultRoute');
+const resultRoutes= require('./routes/resultRoutes');
 
 require('dotenv').config()
 const app = express();
