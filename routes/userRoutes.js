@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const verifyToken = require('../middlewares/verifyToken');
 
 // ✅ Save user after Firebase registration
-router.post('/', async (req, res) => {
+router.post('/', verifyToken , async (req, res) => {
   try {
     const { name, email, image } = req.body;
     const existingUser = await User.findOne({ email });
@@ -34,7 +35,7 @@ router.get('/:email', async (req, res) => {
 });
 
 // ✅ Dynamic role update (student <-> teacher)
-router.put('/:id/role', async (req, res) => {
+router.put('/:id/role', verifyToken , async (req, res) => {
   try {
     const { role } = req.body;
     const updatedUser = await User.findByIdAndUpdate(

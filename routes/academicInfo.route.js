@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const AcademicInfo = require('../models/academicinfo.modal');
+const verifyToken = require('../middlewares/verifyToken');
 
 // ✅ Add new academic info
 // ✅ Prevent duplicate submission
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken , async (req, res) => {
   const { name, registrationNumber, email, classRoll, mobileNumber, session,year} = req.body;
 
   try {
@@ -78,7 +79,7 @@ router.get('/my-info/:email', async (req, res) => {
 
 
 // ✅ UPDATE academic info
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken ,  async (req, res) => {
   try {
     const updated = await AcademicInfo.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.status(200).json(updated);
@@ -88,7 +89,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // ✅ DELETE academic info
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken ,  async (req, res) => {
   try {
     await AcademicInfo.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Academic info deleted successfully' });

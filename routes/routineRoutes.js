@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Routine = require('../models/Routine');
+const verifyToken = require('../middlewares/verifyToken');
 
 // GET all routines (optional filters)
 router.get('/', async (req, res) => {
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST a new routine
-router.post('/', async (req, res) => {
+router.post('/', verifyToken , async (req, res) => {
   try {
     const newRoutine = new Routine(req.body);
     const savedRoutine = await newRoutine.save();
@@ -27,7 +28,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update routine
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken , async (req, res) => {
   try {
     const updated = await Routine.findByIdAndUpdate(req.params.id, req.body, {
       new: true, runValidators: true
@@ -54,7 +55,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // DELETE a routine
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',verifyToken , async (req, res) => {
   try {
     const deleted = await Routine.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).send({ message: 'Routine not found' });

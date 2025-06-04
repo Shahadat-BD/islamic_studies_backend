@@ -13,8 +13,15 @@ require('dotenv').config()
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const corsOptions = {
+  origin: ['https://islamic-studies-department-66er.vercel.app/'], // ✅ Replace with your actual frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+};
+
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -35,7 +42,7 @@ app.use('/api/results', resultRoutes);
 
 // hello world
 app.get('/', (req, res) => {
-  res.send('Islamic studies web application working start!')
+  res.send('Islamic studies web application is running!')
 })
 
 // Start Server

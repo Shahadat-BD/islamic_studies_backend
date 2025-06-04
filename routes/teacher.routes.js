@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Teacher = require('../models/teacher.model');
+const verifyToken = require('../middlewares/verifyToken');
 
 // ✅ Get all teachers
 router.get('/', async (req, res) => {
@@ -40,7 +41,7 @@ router.get('/:id', async (req, res) => {
 
 // ✅ Add a new teacher
 // ✅ Add a new teacher with duplicate email check
-router.post('/', async (req, res) => {
+router.post('/', verifyToken , async (req, res) => {
   const { name, designation, email, phone, department, image } = req.body;
 
   try {
@@ -68,7 +69,7 @@ router.post('/', async (req, res) => {
 
 
 // ✅ Update a teacher
-router.put('/:id', async (req, res) => {
+router.put('/:id',verifyToken , async (req, res) => {
   try {
     const updatedTeacher = await Teacher.findByIdAndUpdate(
       req.params.id,
@@ -87,7 +88,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // ✅ Delete a teacher
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken , async (req, res) => {
   try {
     const result = await Teacher.deleteOne({ _id: req.params.id });
     if (result.deletedCount === 0) {

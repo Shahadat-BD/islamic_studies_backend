@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Notice = require('../models/Notice');
 const upload = require('../middlewares/upload');
-const path = require('path');
+const verifyToken = require('../middlewares/verifyToken');
 
 // 👉 POST Notice
-router.post('/add', upload.single('file'), async (req, res) => {
+router.post('/add', upload.single('file'), verifyToken , async (req, res) => {
   try {
     const { title, date, postedBy } = req.body;
 
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 });
 
 // DELETE /notices/:id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',verifyToken, async (req, res) => {
   try {
     const result = await Notice.findByIdAndDelete(req.params.id);
     if (!result) return res.status(404).json({ message: 'Notice not found' });
@@ -47,7 +47,7 @@ router.delete('/:id', async (req, res) => {
 
 
 // PUT notices/:id
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken , async (req, res) => {
   try {
     const { title, date, postedBy } = req.body;
     const updatedNotice = await Notice.findByIdAndUpdate(
