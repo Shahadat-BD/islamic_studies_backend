@@ -1,39 +1,25 @@
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Ensure the uploads directory exists
-const uploadPath = path.join(__dirname, '../uploads/noticeFiles');
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
+// Cloudinary config using .env
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadPath);
+// Set up storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'notices',
+    allowed_formats: ['jpg', 'jpeg' ,'png', 'pdf'],
+    public_id: (req, file) => `${Date.now()}-${file.originalname}`,
   },
-  filename: function (req, file, cb) {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
-  }
 });
 
-// File filter (optional: accept only image/pdf)
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|pdf/;
-  const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimeType = allowedTypes.test(file.mimetype);
-  if (extName && mimeType) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image/pdf files are allowed'));
-  }
-};
-
-const upload = multer({ 
-  storage: storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB max
-});
+// Export multer middleware
+const upload = multer({ storage });
 
 module.exports = upload;
