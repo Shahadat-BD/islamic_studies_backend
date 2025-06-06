@@ -5,7 +5,8 @@ const upload = require('../middlewares/upload');
 const verifyToken = require('../middlewares/verifyToken');
 
 // 👉 POST Notice
-router.post('/add', upload.single('file'), verifyToken ,  async (req, res) => {
+router.post('/add', upload.single('file'), verifyToken , async (req, res) => {
+  console.log(req.file); 
   try {
     const { title, date, postedBy } = req.body;
 
@@ -13,7 +14,7 @@ router.post('/add', upload.single('file'), verifyToken ,  async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const fileUrl = req.file.path;
+    const fileUrl = req.file.path
 
     const newNotice = new Notice({ title, date, postedBy, fileUrl });
     await newNotice.save();

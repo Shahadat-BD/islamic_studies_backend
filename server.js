@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path')
 const teacherRoutes = require('./routes/teacher.routes');
 const routineRoutes = require('./routes/routineRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -23,7 +22,6 @@ const corsOptions = {
 // Middleware
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB Atlas connection
 mongoose.connect(process.env.MONGO_URI, {

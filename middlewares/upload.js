@@ -1,25 +1,15 @@
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../utils/cloudinary');
 
-// Cloudinary config using .env
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Set up storage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'notices',
-    allowed_formats: ['jpg', 'jpeg' ,'png', 'pdf'],
-    public_id: (req, file) => `${Date.now()}-${file.originalname}`,
+    folder: 'notices', // Cloudinary তে ফোল্ডার তৈরি হবে
+    allowed_formats: ['jpg', 'jpeg', 'png', 'pdf'], // আপনি চাইলে আরও type দিতে পারেন
   },
 });
 
-// Export multer middleware
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
 
 module.exports = upload;
