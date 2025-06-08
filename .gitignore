@@ -6,4 +6,3 @@ node_modules/
 
 # ignore log files
 *.log
-firebase-service-account.json
